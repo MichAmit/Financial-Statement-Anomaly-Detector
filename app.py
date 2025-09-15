@@ -81,15 +81,37 @@ if uploaded_file is not None:
             )
             ax.set_title("2D Anomaly Plot")
             st.pyplot(fig)
+            st.markdown("""
+            This scatter plot visualizes the data points based on the two selected features. **Red data points** indicate the anomalies detected by the model. These are the transactions that are most different from the rest of the dataset, often due to their extreme values in one or more dimensions.
+            """)
         else:
             st.info("Select at least two numerical features to generate a 2D plot.")
             
-        # Optional: Add a simple bar chart of anomaly scores
+        # Add a simple bar chart of anomaly scores
         st.subheader("Anomaly Scores Distribution")
         fig2, ax2 = plt.subplots(figsize=(10, 6))
         sns.histplot(df['anomaly_score'], kde=True, ax=ax2)
         ax2.set_title("Distribution of Anomaly Scores")
+        ax2.axvline(x=0, color='red', linestyle='--', label='Anomaly Threshold')
+        ax2.legend()
         st.pyplot(fig2)
+        st.markdown("""
+        This histogram shows the distribution of anomaly scores assigned by the model. Scores below zero (to the left of the **red dashed line**) are considered anomalies, while scores above zero are considered normal. The further a data point is to the left, the more likely it is to be a significant anomaly.
+        """)
+
+# --- CONCLUSION AND NEXT STEPS ---
+st.header("4. Conclusion and Next Steps")
+st.markdown("""
+Based on the analysis, this tool has successfully identified transactions that deviate significantly from the norm. These outliers, whether due to an unusually high amount, a strange combination of features, or a rare transaction type, warrant further investigation.
+
+### Ways to Fix and Probable Steps Going Forward:
+
+1.  **Manual Review:** The most critical next step is to manually review each flagged anomaly. A human analyst should examine the details of these transactions to determine if they are legitimate, fraudulent, or simply data entry errors.
+2.  **Root Cause Analysis:** For each confirmed anomaly, investigate the root cause. Was it a one-time event, or does it point to a systemic issue? For example, an anomalous expense could indicate a mis-categorized transaction or a new type of vendor relationship that needs to be documented.
+3.  **Refine the Model:** Continuously improve the model by incorporating feedback. If the model flags too many false positives (legitimate transactions), adjust the `contamination` parameter or add more features to the analysis. If it misses clear anomalies, it might be time to collect more data or try a different algorithm.
+4.  **Automate Alerts:** Integrate this anomaly detection logic into a real-time system. Instead of running a batch process, set up an automated alert system that notifies the relevant team (e.g., fraud, finance, or operations) as soon as a suspicious transaction occurs.
+5.  **Expand Features:** For a more robust analysis, include additional features in the model, such as the time of day, day of the week, user ID, or location. These variables can help the model learn more complex patterns and improve its detection accuracy.
+""")
 
 # --- INSTRUCTIONS FOR USE ---
 st.sidebar.title("App Instructions")
